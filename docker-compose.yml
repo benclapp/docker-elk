@@ -51,8 +51,10 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elk
     command:
-      - syslog+tls://logstash:5000
+      - syslog://logstash:5000
 
 # sudo docker run -d --name="logspout" --volume=/var/run/docker.sock:/var/run/docker.sock gliderlabs/logspout syslog+tls://<syslogServerIP>:5000
 
