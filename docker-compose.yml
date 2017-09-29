@@ -4,6 +4,8 @@ services:
 
   elasticsearch:
     build: elasticsearch/
+    container_name: elasticsearch
+    restart: always
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ports:
@@ -16,6 +18,8 @@ services:
 
   logstash:
     build: logstash/
+    container_name: logstash
+    restart: always
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline:/usr/share/logstash/pipeline
@@ -30,6 +34,8 @@ services:
 
   kibana:
     build: kibana/
+    container_name: kibana
+    restart: always
     volumes:
       - ./kibana/config/:/usr/share/kibana/config
     ports:
@@ -38,6 +44,17 @@ services:
       - elk
     depends_on:
       - elasticsearch
+
+  logspout:
+    image: gliderlabs/logspout
+    container_name: logspout
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - syslog+tls://logstash:5000
+
+# sudo docker run -d --name="logspout" --volume=/var/run/docker.sock:/var/run/docker.sock gliderlabs/logspout syslog+tls://<syslogServerIP>:5000
 
 networks:
 
